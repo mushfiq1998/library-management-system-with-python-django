@@ -1,0 +1,30 @@
+{% extends 'user_management/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Login - Library System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="text-center mb-0">Welcome to Library System</h2>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+                <hr>
+                <div class="text-center">
+                    <p>New to Library System?</p>
+                    <a href="{% url 'register' %}" class="btn btn-outline-primary">Create New Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
