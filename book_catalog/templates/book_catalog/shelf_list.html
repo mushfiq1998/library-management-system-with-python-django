@@ -1,0 +1,100 @@
+{% extends 'user_management/base.html' %}
+
+{% block title %}Book Shelves{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg border-0">
+    <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-3">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'dashboard' %}" class="btn btn-light btn-sm" title="Back to Dashboard">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+            <h2 class="mb-0"><i class="fas fa-shelf me-2"></i>Book Shelves</h2>
+        </div>
+        <div class="d-flex gap-2">
+            {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+            <a href="{% url 'shelf_create' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add Shelf
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        {% if shelves %}
+        <div class="row g-4">
+            {% for shelf in shelves %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shelf-card border-0 shadow-sm hover-card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title text-primary mb-0">
+                                <i class="fas fa-bookshelf me-2"></i>{{ shelf.name }}
+                            </h5>
+                            <span class="badge bg-primary rounded-pill">
+                                {{ shelf.books.count }} Books
+                            </span>
+                        </div>
+                        <p class="card-text text-muted">{{ shelf.description|truncatewords:30 }}</p>
+                        <div class="shelf-info mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fas fa-th me-2"></i>Dimensions:</span>
+                                <span class="badge bg-info">{{ shelf.total_rows }} × {{ shelf.total_columns }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><i class="fas fa-box me-2"></i>Available Spaces:</span>
+                                <span class="badge bg-success">
+                                    {{ shelf.total_rows|multiply:shelf.total_columns|subtract:shelf.books.count }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{% url 'shelf_detail' pk=shelf.pk %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-eye me-1"></i>View Layout
+                            </a>
+                            {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+                            <a href="{% url 'shelf_edit' pk=shelf.pk %}" class="btn btn-warning btn-sm">
+                                <i class="fas fa-edit me-1"></i>Edit
+                            </a>
+                            <a href="{% url 'shelf_delete' pk=shelf.pk %}" class="btn btn-danger btn-sm">
+                                <i class="fas fa-trash me-1"></i>Delete
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-shelf fa-3x text-muted mb-3"></i>
+            <p class="lead text-muted">No shelves available.</p>
+            {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+            <a href="{% url 'shelf_create' %}" class="btn btn-primary mt-3">
+                <i class="fas fa-plus me-2"></i>Add Your First Shelf
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Your existing styles */
+.shelf-card {
+    transition: all 0.3s ease;
+}
+
+.shelf-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important;
+}
+
+.shelf-info {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+</style>
+{% endblock %} 

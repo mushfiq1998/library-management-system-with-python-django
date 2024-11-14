@@ -1,0 +1,41 @@
+{% extends 'user_management/base.html' %}
+
+{% block title %}Delete Shelf{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-danger text-white">
+            <h2 class="mb-0">Delete Shelf</h2>
+        </div>
+        <div class="card-body p-4">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Warning:</strong> This action cannot be undone.
+            </div>
+            
+            <p class="lead">Are you sure you want to delete the shelf "{{ shelf.name }}"?</p>
+            
+            {% if shelf.books.exists %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                This shelf contains {{ shelf.books.count }} book{{ shelf.books.count|pluralize }}. 
+                Deleting it will remove all shelf assignments for these books.
+            </div>
+            {% endif %}
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="text-end">
+                    <a href="{% url 'shelf_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger ms-2">
+                        <i class="fas fa-trash me-2"></i>Delete Shelf
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %} 

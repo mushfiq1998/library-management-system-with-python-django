@@ -12,15 +12,29 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from io import BytesIO
 from django.utils import timezone
+from django.db.models import Q
 
 def is_librarian_or_admin(user):
     return user.role in ['LIBRARIAN', 'ADMIN']
 
 @login_required
 def book_list(request):
-    books = Book.objects.all().order_by('title')
+    query = request.GET.get('search', '')
+    books = Book.objects.all()
+    
+    if query:
+        books = books.filter(
+            Q(title__icontains=query) |  # Search in title
+            Q(authors__name__icontains=query) |  # Search in author names
+            Q(isbn__icontains=query)  # Search in ISBN
+        ).distinct().order_by('title')
+    else:
+        books = books.order_by('title')
+        
     return render(
-        request, 'book_catalog/book_list.html', {'books': books})
+        request, 'book_catalog/book_list.html', 
+        {'books': books, 'search_query': query}
+    )
 
 @login_required
 def book_detail(request, pk):
