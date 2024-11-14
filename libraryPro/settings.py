@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'user_management',
     'crispy_forms',
     'crispy_bootstrap5',
+
+    # Custom Apps
+    'user_management',
+    'book_catalog',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +140,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 LOGIN_URL = 'login'
+
+# Add these settings at the bottom of the file
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

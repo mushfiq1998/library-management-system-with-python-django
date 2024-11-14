@@ -32,6 +32,38 @@
                 </div>
             </div>
         </div>
+        <div class="card mt-3">
+            <div class="card-header section-header" data-bs-toggle="collapse" data-bs-target="#bookCatalogMenu" aria-expanded="true">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Book Catalog</h5>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+            <div class="collapse show" id="bookCatalogMenu">
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'book_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-book me-2"></i>View Books
+                    </a>
+                    <a href="{% url 'author_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user-edit me-2"></i>View Authors
+                    </a>
+                    <a href="{% url 'genre_list' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-tags me-2"></i>View Genres
+                    </a>
+                    {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+                    <a href="{% url 'book_create' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus me-2"></i>Add Book
+                    </a>
+                    <a href="{% url 'author_create' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-user-plus me-2"></i>Add Author
+                    </a>
+                    <a href="{% url 'genre_create' %}" class="list-group-item list-group-item-action">
+                        <i class="fas fa-plus-circle me-2"></i>Add Genre
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Content -->

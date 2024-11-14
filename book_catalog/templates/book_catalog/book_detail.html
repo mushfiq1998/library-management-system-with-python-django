@@ -1,0 +1,179 @@
+{% extends 'user_management/base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0"><i class="fas fa-book me-2"></i>{{ book.title }}</h2>
+            <div>
+                <a href="{% url 'book_pdf' pk=book.pk %}" class="btn btn-danger hover-scale me-2" target="_blank">
+                    <i class="fas fa-file-pdf me-2"></i>Print PDF
+                </a>
+                {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+                <a href="{% url 'book_edit' pk=book.pk %}" class="btn btn-warning hover-scale me-2">
+                    <i class="fas fa-edit me-2"></i>Edit
+                </a>
+                <a href="{% url 'book_delete' pk=book.pk %}" class="btn btn-danger hover-scale me-2">
+                    <i class="fas fa-trash me-2"></i>Delete
+                </a>
+                {% endif %}
+                <a href="{% url 'book_list' %}" class="btn btn-info hover-scale">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Books
+                </a>
+            </div>
+        </div>
+        <div class="card-body bg-light">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="info-section p-4 bg-white rounded shadow-sm mb-4">
+                        <h3 class="text-primary mb-4 border-bottom pb-2">Book Information</h3>
+                        <dl class="row">
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-user-edit me-2"></i>Authors</dt>
+                            <dd class="col-sm-9">
+                                {% for author in book.authors.all %}
+                                <a href="{% url 'author_detail' pk=author.pk %}" class="text-decoration-none">
+                                    {{ author.name }}{% if not forloop.last %}, {% endif %}
+                                </a>
+                                {% endfor %}
+                            </dd>
+
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-barcode me-2"></i>ISBN</dt>
+                            <dd class="col-sm-9">{{ book.isbn }}</dd>
+
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-tags me-2"></i>Genres</dt>
+                            <dd class="col-sm-9">
+                                {% for genre in book.genres.all %}
+                                {{ genre.name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </dd>
+
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-calendar me-2"></i>Publication Date</dt>
+                            <dd class="col-sm-9">{{ book.publication_date|date:"F j, Y" }}</dd>
+
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-bookmark me-2"></i>Edition</dt>
+                            <dd class="col-sm-9">{{ book.edition|default:"N/A" }}</dd>
+
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-language me-2"></i>Language</dt>
+                            <dd class="col-sm-9">{{ book.get_language_display }}</dd>
+
+                            <dt class="col-sm-3 text-muted"><i class="fas fa-align-left me-2"></i>Summary</dt>
+                            <dd class="col-sm-9">{{ book.summary|default:"No summary available"|linebreaks }}</dd>
+                        </dl>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    {% if book.barcode or book.qr_code %}
+                    <div class="codes-section p-4 bg-white rounded shadow-sm">
+                        {% if book.barcode %}
+                        <div class="mb-4">
+                            <h4 class="text-primary mb-3 border-bottom pb-2"><i class="fas fa-barcode me-2"></i>Barcode</h4>
+                            <img src="{{ book.barcode.url }}" alt="Book Barcode" class="img-fluid">
+                        </div>
+                        {% endif %}
+                        {% if book.qr_code %}
+                        <div>
+                            <h4 class="text-primary mb-3 border-bottom pb-2"><i class="fas fa-qrcode me-2"></i>QR Code</h4>
+                            <img src="{{ book.qr_code.url }}" alt="Book QR Code" class="img-fluid">
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-scale {
+    transition: all 0.3s ease;
+}
+.hover-scale:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+.card {
+    border-radius: 15px;
+}
+.card-header {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+.info-section, .codes-section {
+    transition: all 0.3s ease;
+}
+.info-section:hover, .codes-section:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15)!important;
+}
+
+/* Button Styles */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem;
+    border: none;
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, #e74a3b 0%, #c0392b 100%);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(45deg, #c0392b 0%, #e74a3b 100%);
+}
+
+.btn-warning {
+    background: linear-gradient(45deg, #f6c23e 0%, #f39c12 100%);
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(45deg, #f39c12 0%, #f6c23e 100%);
+}
+
+.btn-info {
+    background: linear-gradient(45deg, #36b9cc 0%, #2980b9 100%);
+    color: white;
+}
+
+.btn-info:hover {
+    background: linear-gradient(45deg, #2980b9 0%, #36b9cc 100%);
+}
+
+/* Add shadow effect to buttons */
+.btn {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    color: white;
+}
+
+/* Add pulse animation to PDF button */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 74, 59, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(231, 74, 59, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(231, 74, 59, 0);
+    }
+}
+
+.btn-danger {
+    animation: pulse 2s infinite;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #4e73df 0%, #224abe 100%);
+}
+</style>
+{% endblock %} 

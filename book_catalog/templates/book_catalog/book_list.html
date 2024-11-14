@@ -1,0 +1,163 @@
+{% extends 'user_management/base.html' %}
+
+{% block title %}Book Catalog{% endblock %}
+
+{% block content %}
+<div class="card shadow-lg border-0">
+    <div class="card-header bg-gradient-primary text-white d-flex justify-content-between align-items-center py-3">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'dashboard' %}" class="btn btn-light btn-sm" title="Back to Dashboard">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+            <h2 class="mb-0"><i class="fas fa-books me-2"></i>Book Catalog</h2>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'book_list_pdf' %}" class="btn btn-light">
+                <i class="fas fa-file-pdf text-danger"></i> Print PDF
+            </a>
+            {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+            <a href="{% url 'book_create' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add Book
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card-body p-4">
+        {% if books %}
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="bg-light">
+                    <tr class="text-primary">
+                        <th class="fw-bold">Title</th>
+                        <th class="fw-bold">Author(s)</th>
+                        <th class="fw-bold">ISBN</th>
+                        <th class="fw-bold">Language</th>
+                        <th class="fw-bold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in books %}
+                    <tr class="align-middle hover-row">
+                        <td class="fw-semibold text-primary">{{ book.title }}</td>
+                        <td>
+                            {% for author in book.authors.all %}
+                            <span class="badge bg-info text-dark">{{ author.name }}</span>
+                            {% endfor %}
+                        </td>
+                        <td><span class="badge bg-light text-dark border">{{ book.isbn }}</span></td>
+                        <td><span class="badge bg-success text-white">{{ book.get_language_display }}</span></td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'book_detail' pk=book.pk %}" 
+                                   class="btn btn-sm btn-info text-white" 
+                                   title="View Details"
+                                   data-bs-toggle="tooltip">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'book_pdf' pk=book.pk %}" 
+                                   class="btn btn-sm btn-secondary" 
+                                   title="Download PDF"
+                                   data-bs-toggle="tooltip">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                                {% if user.role == 'ADMIN' or user.role == 'LIBRARIAN' %}
+                                <a href="{% url 'book_edit' pk=book.pk %}" 
+                                   class="btn btn-sm btn-warning" 
+                                   title="Edit"
+                                   data-bs-toggle="tooltip">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'book_delete' pk=book.pk %}" 
+                                   class="btn btn-sm btn-danger" 
+                                   title="Delete"
+                                   data-bs-toggle="tooltip">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-books fa-3x text-muted mb-3"></i>
+            <p class="lead text-muted">No books available in the catalog.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.bg-gradient-primary {
+    background: linear-gradient(45deg, #4e73df 0%, #224abe 100%);
+}
+
+.hover-row:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-group .btn {
+    margin: 0 2px;
+    border-radius: 4px !important;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 0.5em 0.8em;
+    margin: 0.1em;
+}
+
+.table th {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+});
+</script>
+{% endblock %} 

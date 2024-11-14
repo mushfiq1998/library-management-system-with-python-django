@@ -11,3 +11,9 @@ tzdata==2023.4
 
 # Development tools (optional)
 django-debug-toolbar==4.2.0  # For debugging 
+
+# Additional packages
+Pillow==10.0.0
+python-barcode==0.14.0
+qrcode==7.4.2
+reportlab==4.0.7
